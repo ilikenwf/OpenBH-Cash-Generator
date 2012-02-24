@@ -31,117 +31,128 @@ class OpenBHConf
     
     private function __construct() 
     {
-    	$this->conf['domain'] = 'http://217.150.241.141/syndk8tools/openbh/';
+		$this->conf['domain'] = 'http://217.150.241.141/syndk8tools/openbh/';
 
         $this->conf['template'] = 'template1';
 		
-            /**
-             * Hooks Setup
-             *
-             * Classname of the Hook and
-             * probability to be used in %
-             * additional arguments
-             *
-             * Hooks will be applied in this exact order!
-             */
-            $this->conf['hooks'] = array(	//Grab the content
-											'Flickr'=>array('prob'=>50),
-											'Google'=>array('prob'=>0,'minlength'=>300,'maxlength'=>400),
-											'Bing'=>array('prob'=>100),
-											'Articles'=>array('prob'=>100),
-											//'eZinesArticles'=>array('prob'=>100),
-											//'TheBestSpinner'=>arra('prob'=>100,'user'=>'kap','pass'=>'mango'),
-											
-											//Change the content
-											'SynReplace'=>array('prob'=>50,'adv'=>true,'n'=>true,'v'=>false,'adj'=>false,'prep'=>true),
-											'Badwords'=>array('prob'=>100),
-											'KwDensity'=>array('prob'=>100,'density'=>5),
-											//'Markov'=>array('prob'=>100),
-											'ShuffleSentences'=>array('prob'=>100),
-											'ContentLength'=>array('prob'=>100,'lengthmin'=>1700,'lengthmax'=>3500),
-											'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50),
-											
-											//Build the RSS
-											'Rss'=>array('prob'=>100)
-            );
+		/**
+		 * Hooks Setup
+		 *
+		 * Classname of the Hook and
+		 * probability to be used in %
+		 * additional arguments
+		 *
+		 * Hooks will be applied in this exact order!
+		 */
+		$this->conf['hooks'] = array(	//Grab the content
+										'Flickr'=>array('prob'=>50),
+										'Google'=>array('prob'=>0,'minlength'=>300,'maxlength'=>400),
+										'Bing'=>array('prob'=>100),
+										'Articles'=>array('prob'=>100),
+										//'eZinesArticles'=>array('prob'=>100),
+										//'TheBestSpinner'=>arra('prob'=>100,'user'=>'kap','pass'=>'mango'),
+										
+										//Change the content
+										'SynReplace'=>array('prob'=>50,'adv'=>true,'n'=>true,'v'=>false,'adj'=>false,'prep'=>true),
+										'Badwords'=>array('prob'=>100),
+										'KwDensity'=>array('prob'=>100,'density'=>5),
+										//'Markov'=>array('prob'=>100),
+										'ShuffleSentences'=>array('prob'=>100),
+										'ContentLength'=>array('prob'=>100,'lengthmin'=>1700,'lengthmax'=>3500),
+										'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50),
+										
+										//Build the RSS
+										'Rss'=>array('prob'=>100)
+		);
 
-            /* ImageHook configuration - hook,probability */
-            $this->conf['imghooks'] = array(	'YahooImages'=>100,
-                                                'Sxc'=>10
-            );
+		/* ImageHook configuration - hook,probability */
+		$this->conf['imghooks'] = array(	'YahooImages'=>100,
+											'Sxc'=>10
+		);
 
-            /* deprecated */
-            $this->conf['RssNames'] = array(	'feed',
-												'rssfeed',
-												'rss'
-            );
+		/* deprecated */
+		//if so, why is this here? --ilikenwf
+		$this->conf['RssNames'] = array(	
+											'feed',
+											'rssfeed',
+											'rss'
+		);
 
-            /* serve ads with this hook (if you're actually using dynamic ads) */
-            $this->conf['dynadhook'] = array(	'Exoclick'	);
+		/* serve ads with this hook (if you're actually using dynamic ads) */
+		$this->conf['dynadhook'] = array(	'Exoclick'	);
 
-            /**
-             * Mappings for your datafeeds (in case you are using datafeeds to also produce ads)
-             *
-             * you ALWAYS have to name your keyword col 'keyword' <- required
-             * you ALWAYS have to name the link/url 'url' (so we can later on identify this part, the rest will be replaced dynamically using the key as token) <- not required
-             *
-             * eg: 'prodname' will replace #prodname# in your ad template
-             *
-             */
+		/**
+		 * Mappings for your datafeeds (in case you are using datafeeds to also produce ads)
+		 *
+		 * you ALWAYS have to name your keyword col 'keyword' <- required
+		 * you ALWAYS have to name the link/url 'url' (so we can later on identify this part, the rest will be replaced dynamically using the key as token) <- not required
+		 *
+		 * eg: 'prodname' will replace #prodname# in your ad template
+		 *
+		 */
 
-            $this->conf['xmlfeed'] = false; // EXPERIMENTAL : set to true for xml feeds..
+		$this->conf['xmlfeed'] = false; // EXPERIMENTAL : set to true for xml feeds..
 
-            /* csv datafeeds */
-             $this->conf['feedmapping'] = array(    'keyword'=>40,
-                                                    'url'=>8,
-                                                    'description'=>12,
-                                                    'price'=>79,
-                                                    'imageurl'=>25
-            );
+		/* csv datafeeds */
+		$this->conf['feedmapping'] = array(     'keyword'=>40,
+												'url'=>8,
+												'description'=>12,
+												'price'=>79,
+												'imageurl'=>25
+		);
 
-             /* in case your feed is in xml */
-             $this->conf['xmlfeedparent'] = 'item';
-             $this->conf['xmlfeedmapping'] = array( 'keyword'=>'keyword',
-                                                    'url'=>'url',
-                                                    'description'=>'desc',
-                                                    'price'=>'price',
-                                                    'imageurl'=>'img'
-             );
+		/* in case your feed is in xml */
+		$this->conf['xmlfeedparent'] = 'item';
+		$this->conf['xmlfeedmapping'] = array(  'keyword'=>'keyword',
+												'url'=>'url',
+												'description'=>'desc',
+												'price'=>'price',
+												'imageurl'=>'img'
+		);
 
-            /* navigation min/max items */
-            $this->conf['navlinks_min'] = 12;
-            $this->conf['navlinks_max'] = 20;
+		/* navigation min/max items */
+		$this->conf['navlinks_min'] = 12;
+		$this->conf['navlinks_max'] = 20;
 
-            /* start page count */
-            $this->conf['startpage'] = 7;
+		/* start page count */
+		$this->conf['startpage'] = 7;
 
-            /* url patterns */
-            $this->conf['filename_pattern'] = "/_(.*)_/";
-            $this->conf['filename_generator'] = "{countfiles}-{num,3}_%keyword%_%datecreated%"; // {generator,args} %tokens% (special 'stuff')
-            
-            /* cc + cn */
-            $this->conf['cc'] = 'us';
-            $this->conf['cn'] = 'USA';
+		/* url patterns */
+		$this->conf['filename_pattern'] = "/_(.*)_/";
+		$this->conf['filename_generator'] = "{countfiles}-{num,3}_%keyword%_%datecreated%"; // {generator,args} %tokens% (special 'stuff')
+		
+		/* cc + cn */
+		$this->conf['cc'] = 'us';
+		$this->conf['cn'] = 'USA';
 
-            /* CSV Setup */
-            $this->conf['csv_delimiter'] = ','; // only one character!
-            $this->conf['csv_escape'] = '\\';
-            $this->conf['csv_enclosure'] = '"';
+		/* CSV Setup */
+		$this->conf['csv_delimiter'] = ','; // only one character!
+		$this->conf['csv_escape'] = '\\';
+		$this->conf['csv_enclosure'] = '"';
 
-            /* 404 default output */
-            $this->conf['404'] = '404 / Site not Found';
-            
-            /* cloaking ;) */
-            $this->conf['cloak'] = false;
+		/* 404 default output */
+		$this->conf['404'] = '404 / Site not Found';
+		
+		/* cloaking ;) */
+		$this->conf['cloak'] = false;
 
-            /* Choose a filetype */
-            $this->conf['filetype'] = '.html';
+		/* Choose a filetype */
+		$this->conf['filetype'] = '.html';
 
-            /* log visitors and bots */
-            $this->conf['loghits'] = true;
+		/* log visitors and bots */
+		$this->conf['loghits'] = true;
 
-            /* not working ? try log to errlog.txt */
-            $this->conf['errlog'] = true;
+		/* not working ? try log to errlog.txt */
+		$this->conf['errlog'] = true;
+		
+		/** 
+		 * Database caching configuration...
+		 * Uncomment and set these if you know what you're doing.
+		 */
+		//$this->conf['dbhost'] = '';
+		//$this->conf['dbuser'] = '';
+		//$this->conf['dpbass'] = '';
+		//$this->conf['dbname'] = '';
     }
 
     public static function get($key)
@@ -172,6 +183,7 @@ class OpenBHConf
 
 /**
  *  Various Stuff, Logging, TemplateRewrite etc 
+ *  should be moved...yes, this may be a global file, but this is lazy --ilikenwf
  */
 
 function autoLog($errornum, $errormsg, $errorfile, $errorline) {

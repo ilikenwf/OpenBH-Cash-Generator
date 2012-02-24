@@ -17,6 +17,7 @@ class DBLayer {
         $this->user = OpenBHConf::get('dbuser');
         $this->pass = OpenBHConf::get('dbpass');
         $this->name = OpenBHConf::get('dbname');
+        $this->host = OpenBHConf::get('dbhost');
         
         $this->connection = new mysqli($this->host,$this->user,$this->pass,$this->name);
         if ($this->connection->connect_error) {

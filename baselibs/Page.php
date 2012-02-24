@@ -230,38 +230,39 @@ class Page
 			$this->template = str_ireplace("[[dynamicad(html)]]",$ad->ServeAdHTML());
 		}
 
-                /* on the fly function tokens.. {{funcName}} */
+		/* on the fly function tokens.. {{funcName}} */
  		$this->template = preg_replace_callback(	"/{{(.+?)}}/",
-                                                                create_function(    '$matches',
-                                                                                    '$expl = explode(",",$matches[1]);
-                                                                                    if(function_exists($expl[0])) { if(isset($expl[1])) { return $expl[0]($expl[1]); } else { return $expl[0](); } } return "";'
-                                                                ),
-                                                                $this->template);
+												create_function(    '$matches',
+																	'$expl = explode(",",$matches[1]);
+																	if(function_exists($expl[0])) { if(isset($expl[1])) { return $expl[0]($expl[1]); } else { return $expl[0](); } } return "";'
+												),
+												$this->template);
 
-                /* cached function tokens ((funcName)) */
-                preg_match_all('/\(\((.+?)\)\)/is',$this->template,$cachedFuncs);
-                foreach($cachedFuncs[1] as $cachedFunc) {
-                    if(!array_key_exists($cachedFunc,$this->cachedFuncStorage)) {
-                        if(function_exists($cachedFunc)) {
-                            $this->cachedFuncStorage[$cachedFunc] = $cachedFunc($this);
-                        } else {
-                            $this->cachedFuncStorage[$cachedFunc] = '';
-                        }
-                    }
-                    $this->template = str_ireplace(sprintf('((%s))',$cachedFunc),$this->cachedFuncStorage[$cachedFunc],$this->template);
-                }
-                /* i love syndk8 */
-                $cc = OpenBHConf::get('cc');
-                $cn = " ".OpenBHConf::get('cn');
-                if(strtoupper($cc)=='US') {
-                    $cc = '';
-                    $cn = '';
-                }
-                $this->template = str_ireplace('[LOVE]',"<a href='https://www.syndk8.com/{$cc}'>Make Money Online{$cn}",$this->template);
+		/* cached function tokens ((funcName)) */
+		preg_match_all('/\(\((.+?)\)\)/is',$this->template,$cachedFuncs);
+		foreach($cachedFuncs[1] as $cachedFunc) {
+			if(!array_key_exists($cachedFunc,$this->cachedFuncStorage)) {
+				if(function_exists($cachedFunc)) {
+					$this->cachedFuncStorage[$cachedFunc] = $cachedFunc($this);
+				} else {
+					$this->cachedFuncStorage[$cachedFunc] = '';
+				}
+			}
+			$this->template = str_ireplace(sprintf('((%s))',$cachedFunc),$this->cachedFuncStorage[$cachedFunc],$this->template);
+		}
+		
+		/* i love syndk8 */
+		$cc = OpenBHConf::get('cc');
+		$cn = " ".OpenBHConf::get('cn');
+		if(strtoupper($cc)=='US') {
+			$cc = '';
+			$cn = '';
+		}
+		$this->template = str_ireplace('[LOVE]',"<a href='https://www.syndk8.com/{$cc}'>Make Money Online{$cn}",$this->template);
                 
-                /* replace the rest */
+		/* replace the rest */
 		$this->template = preg_replace('/\[\[.+?\]\]/','',$this->template);
-                $this->template = preg_replace('/\[\[\/.+?\]\]/','',$this->template);
+		$this->template = preg_replace('/\[\[\/.+?\]\]/','',$this->template);
 		
 		return $this->template;
 	}
@@ -323,59 +324,60 @@ class Page
 	}
 	
 	private function SetCache() {
-            if(OpenBHConf::get('db')) {
-                $this->SetCacheDB();
-                return;
-            }
+		if(OpenBHConf::get('db')) {
+			$this->SetCacheDB();
+			return;
+		}
 		if($this->keyword=='') {
-                    return false;
-                }
-                $path = sprintf('data/content/%s',base64_encode($this->keyword));
+			return false;
+		}
+		
+		$path = sprintf('data/content/%s',base64_encode($this->keyword));
 		file_put_contents($path,gzcompress(serialize($this)));
 	}
 	
-        private function SetCacheDB() {
-            $oc_identifier = base64_encode($this->keyword);
-            $oc_data = gzcompress(serialize($this));
-            $dbl = new DBLayer();
-            if($dbl->Exists("SELECT oc_id FROM openbh_cache WHERE oc_identifier = '{$oc_identifier}'")) {
-                if($dbl->Query("UPDATE openbh_cache SET oc_data = '{$oc_data}' WHERE oc_identifier = '{$oc_identifier}'")) {
-                    $dbl->EndSession(true);
-                    return true;
-                }
-                $dbl->EndSession(false);
-                return false;
-            }
-            if($dbl->Query("INSERT INTO openbh_cache SET oc_data = '{$oc_data}', oc_identifier = '{$oc_identifier}'")) {
-                $dbl->EndSession(true);
-                return true;
-            }
-            $dbl->EndSession(false);
-            return false;
-        }
-
-        public static function GetCacheDB($keyword) {
-            $oc_identifier = base64_encode($keyword);
-            $dbl = new DBLayer();
-            $oc = $dbl->QueryAndReturn("SELECT oc_data FROM openbh_cache WHERE oc_identifier = '{$oc_identifier}'");
-            foreach($oc as $c) {
-                return unserialize(gzuncompress($c['oc_data']));
-            }
-        }
-
 	// static cache/object loader 
 	public static function GetCache($keyword) {
-                if($keyword=='') {
-                    return null;
-                }
-                if(OpenBHConf::get('db')) {
-                    return Page::GetCacheDB($keyword);
-                }
-                $path = sprintf('data/content/%s',base64_encode($keyword));
-                if(!file_exists($path)) {
-                            return null;
-                }
-                return unserialize(gzuncompress(file_get_contents(sprintf('data/content/%s',base64_encode($keyword)))));
+		if($keyword=='') {
+			return null;
+		}
+		if(OpenBHConf::get('db')) {
+			return Page::GetCacheDB($keyword);
+		}
+		$path = sprintf('data/content/%s',base64_encode($keyword));
+		if(!file_exists($path)) {
+					return null;
+		}
+		return unserialize(gzuncompress(file_get_contents(sprintf('data/content/%s',base64_encode($keyword)))));
+	}
+	
+	private function SetCacheDB() {
+		$oc_identifier = base64_encode($this->keyword);
+		$oc_data = gzcompress(serialize($this));
+		$dbl = new DBLayer();
+		if($dbl->Exists("SELECT oc_id FROM openbh_cache WHERE oc_identifier = '{$oc_identifier}'")) {
+			if($dbl->Query("UPDATE openbh_cache SET oc_data = '{$oc_data}' WHERE oc_identifier = '{$oc_identifier}'")) {
+				$dbl->EndSession(true);
+				return true;
+			}
+			$dbl->EndSession(false);
+			return false;
+		}
+		if($dbl->Query("INSERT INTO openbh_cache SET oc_data = '{$oc_data}', oc_identifier = '{$oc_identifier}'")) {
+			$dbl->EndSession(true);
+			return true;
+		}
+		$dbl->EndSession(false);
+		return false;
+	}
+
+	public static function GetCacheDB($keyword) {
+		$oc_identifier = base64_encode($keyword);
+		$dbl = new DBLayer();
+		$oc = $dbl->QueryAndReturn("SELECT oc_data FROM openbh_cache WHERE oc_identifier = '{$oc_identifier}'");
+		foreach($oc as $c) {
+			return unserialize(gzuncompress($c['oc_data']));
+		}
 	}
 }
 
