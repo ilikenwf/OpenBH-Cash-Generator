@@ -45,32 +45,34 @@ class OpenBHConf
              * Hooks will be applied in this exact order!
              */
             $this->conf['hooks'] = array(	'Flickr'=>array('prob'=>50),
-                                                'Google'=>array('prob'=>0,'minlength'=>300,'maxlength'=>400),
-                                                'Bing'=>array('prob'=>100),
-                                                'Articles'=>array('prob'=>100),
-                                                'Rss'=>array('prob'=>100),
-                                                'ShuffleSentences'=>array('prob'=>100),
-                                                'SynReplace'=>array('prob'=>50,'adv'=>true,'n'=>true,'v'=>false,'adj'=>false,'prep'=>true),
-                                                'KwDensity'=>array('prob'=>100,'density'=>5),
-                                                'Badwords'=>array('prob'=>100),
-                                                'ContentLength'=>array('prob'=>100,'lengthmin'=>1700,'lengthmax'=>3500),
-                                                'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50)
+											'Google'=>array('prob'=>0,'minlength'=>300,'maxlength'=>400),
+											'Bing'=>array('prob'=>100),
+											'Articles'=>array('prob'=>100),
+											'Rss'=>array('prob'=>100),
+											'ShuffleSentences'=>array('prob'=>100),
+											'SynReplace'=>array('prob'=>50,'adv'=>true,'n'=>true,'v'=>false,'adj'=>false,'prep'=>true),
+											'KwDensity'=>array('prob'=>100,'density'=>5),
+											'Badwords'=>array('prob'=>100),
+											'ContentLength'=>array('prob'=>100,'lengthmin'=>1700,'lengthmax'=>3500),
+											'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50)
+											//The below requires a username and password, and a comma above
+											//'eZinesArticles'=>array('prob'=>100),
+											//'TheBestSpinner'=>arra('prob'=>100,'user'=>'kap','pass'=>'mango'),
             );
 
             /* ImageHook configuration - hook,probability */
-            $this->conf['imghooks'] = array( 	'YahooImages'=>100,
-                                                    'Sxc'=>10
+            $this->conf['imghooks'] = array(	'YahooImages'=>100,
+                                                'Sxc'=>10
             );
 
             /* deprecated */
             $this->conf['RssNames'] = array(	'feed',
-                                                    'rssfeed',
-                                                    'rss'
+												'rssfeed',
+												'rss'
             );
 
             /* serve ads with this hook (if you're actually using dynamic ads) */
-            $this->conf['dynadhook'] = array(	'Exoclick'
-            );
+            $this->conf['dynadhook'] = array(	'Exoclick'	);
 
             /**
              * Mappings for your datafeeds (in case you are using datafeeds to also produce ads)
