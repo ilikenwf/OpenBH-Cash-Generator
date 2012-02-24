@@ -49,20 +49,18 @@ class OpenBHConf
 										'Google'=>array('prob'=>0,'minlength'=>300,'maxlength'=>400),
 										'Bing'=>array('prob'=>100),
 										'Articles'=>array('prob'=>100),
+										'Rss'=>array('prob'=>100)
 										//'eZinesArticles'=>array('prob'=>100),
 										//'TheBestSpinner'=>arra('prob'=>100,'user'=>'kap','pass'=>'mango'),
 										
 										//Change the content
-										'SynReplace'=>array('prob'=>50,'adv'=>true,'n'=>true,'v'=>false,'adj'=>false,'prep'=>true),
-										'Badwords'=>array('prob'=>100),
-										'KwDensity'=>array('prob'=>100,'density'=>5),
-										//'Markov'=>array('prob'=>100),
+										//'Markov'=>array('prob'=>100), //markov sucks
 										'ShuffleSentences'=>array('prob'=>100),
+										'SynReplace'=>array('prob'=>50,'adv'=>true,'n'=>true,'v'=>false,'adj'=>false,'prep'=>true),
+										'KwDensity'=>array('prob'=>100,'density'=>5),
+										'Badwords'=>array('prob'=>100),
 										'ContentLength'=>array('prob'=>100,'lengthmin'=>1700,'lengthmax'=>3500),
-										'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50),
-										
-										//Build the RSS
-										'Rss'=>array('prob'=>100)
+										'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50),										
 		);
 
 		/* ImageHook configuration - hook,probability */
