@@ -18,7 +18,7 @@
 
 
 	/**
-	 *   adhooks/Markov.php
+	 *   hooks/Markov.php
 	 * 
 	 * 	 Ported from YACG 3.9.0
 	 * 
