@@ -79,7 +79,7 @@ function GetPage($settings) {
 			foreach(glob('data/content/*',GLOB_NOSORT) as $filename) {
 				// ...
 				$p = Page::GetCache(base64_decode(str_replace('data/content/','',$filename)));
-				$loc .= sprintf('<loc><url>%s%s</url></loc>',OpenBHConf::get('domain'),$p->filename);
+				$loc .= sprintf('<url><loc>%s%s</loc></url>',OpenBHConf::get('domain'),$p->filename);
 			}
 			$page->content = sprintf('	<?xml version="1.0" encoding="UTF-8"?>
 											<urlset
