@@ -2,3 +2,4 @@ Special thanks to code contributors:
 
 API: hehejo 
 eZineArticle scraper and The Best Spinner integration: KaptainKrayola
+Porting Markov hook from YACG: ilikenwf
