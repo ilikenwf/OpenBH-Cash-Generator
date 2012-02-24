@@ -56,7 +56,7 @@ class OpenBHConf
 											'SynReplace'=>array('prob'=>50,'adv'=>true,'n'=>true,'v'=>false,'adj'=>false,'prep'=>true),
 											'Badwords'=>array('prob'=>100),
 											'KwDensity'=>array('prob'=>100,'density'=>5),
-											'Markov'=>array('prob'=>100),
+											//'Markov'=>array('prob'=>100),
 											'ShuffleSentences'=>array('prob'=>100),
 											'ContentLength'=>array('prob'=>100,'lengthmin'=>1700,'lengthmax'=>3500),
 											'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50),
