@@ -70,7 +70,7 @@ class Page
          */
 	function __construct($keyword,$special=false,$advertisment=null,$empty=false) //$title,$content,$h1,$h2,$last,$next,$navlinks)
 	{
-		if(!file_exists(sprintf('templates/%s/site.html',OpenBHConf::get('template')))) {
+		if (!file_exists(sprintf('templates/%s/site.html',OpenBHConf::get('template')))) {
 			return false;
 		}
 		$this->template = file_get_contents(sprintf('templates/%s/site.html',OpenBHConf::get('template')));
@@ -89,10 +89,10 @@ class Page
 		$this->h1 = $this->TextSnippet($this->keyword,'h1.txt');
 		$this->h2 = $this->TextSnippet($this->keyword,'h2.txt');
 
-		if($special==false && $empty==false) {
+		if ($special==false && $empty==false) {
 			$this->Init();
 		}
-		if($empty==true) {
+		if ($empty==true) {
 			$this->SetCache();
 		}
 	}
@@ -126,7 +126,7 @@ class Page
 		$filegen = preg_replace_callback(	"/{(.+?)}/",
                                                         create_function(    '$matches',
                                                                             '$expl = explode(",",$matches[1]);
-                                                                            if(function_exists($expl[0])) { if(isset($expl[1])) { return $expl[0]($expl[1]); } else { return $expl[0](); } } return "";'
+                                                                            if (function_exists($expl[0])) { if (isset($expl[1])) { return $expl[0]($expl[1]); } else { return $expl[0](); } } return "";'
                                                         ),
                                                         $filegen);
 		/* cleanup ;) */
@@ -142,12 +142,12 @@ class Page
 		$filenames = array();
 		$keywords = $datafeed->ReturnRandomEntries(rand(OpenBHConf::get('navlinks_min'),OpenBHConf::get('navlinks_max')));
 		foreach($keywords as $keyword) {
-                        if($keyword=='') {
+                        if ($keyword=='') {
                             continue;
                         }
 			/* we need to check if we already generated this page (because of the randomized filename..) */
 			$tmpPage = Page::GetCache($keyword);
-			if(is_null($tmpPage)) {
+			if (is_null($tmpPage)) {
 				/* we didnt already created it we need to assign a random filename now !! and store it as empty page..) */
 				$p = new Page($keyword,false,null,true); // create empty page .. will generate filename 
 				array_push($filenames,array('kw'=>$keyword,'filename'=>$p->filename));
@@ -160,7 +160,7 @@ class Page
 		
 		$this->last_kw = $datafeed->ReturnPrevKw($this->keyword);
 		$prevPage = Page::GetCache($this->last_kw);
-		if(is_null($prevPage)) {
+		if (is_null($prevPage)) {
 			$prevPage = new Page($this->last_kw,false,null,true);
 			$this->last = $prevPage->filename;
 		} else {
@@ -169,7 +169,7 @@ class Page
 		
 		$this->next_kw = $datafeed->ReturnNextKw($this->keyword);
 		$nextPage = Page::GetCache($this->next_kw);
-		if(is_null($nextPage)) {
+		if (is_null($nextPage)) {
 			$nextPage = new Page($this->next_kw,false,null,true);
 			$this->next = $nextPage->filename;
 		} else {
@@ -218,13 +218,13 @@ class Page
 		$this->template = str_ireplace("[[keyword]]",$this->keyword,$this->template);
 		
 		/* ads */
-		if(stripos($this->template,"[[staticad(js)]]")!==FALSE || stripos($this->template,"[[staticad(html)]]")!==FALSE) {
+		if (stripos($this->template,"[[staticad(js)]]")!==FALSE || stripos($this->template,"[[staticad(html)]]")!==FALSE) {
 			$ad = new StaticAdvertising($this->advertisment);
 			$this->template = str_ireplace("[[staticad(js)]]",$ad->ServeAdJS(),$this->template);
 			$this->template = str_ireplace("[[staticad(html)]]",$ad->ServeAdHTML(),$this->template);
 		}
 		
-		if(stripos($this->template,"[[dynamicad(js)#")!==FALSE || stripos($this->template,"[[dynamicad(html)]]")!==FALSE) {
+		if (stripos($this->template,"[[dynamicad(js)#")!==FALSE || stripos($this->template,"[[dynamicad(html)]]")!==FALSE) {
 			$ad = new DynamicAdvertising($this->keyword,OpenBHConf::get('dynadhook'));
 			$this->template = str_ireplace("[[dynamicad(js)]]",$ad->ServeAdJS());
 			$this->template = str_ireplace("[[dynamicad(html)]]",$ad->ServeAdHTML());
@@ -234,15 +234,15 @@ class Page
  		$this->template = preg_replace_callback(	"/{{(.+?)}}/",
 												create_function(    '$matches',
 																	'$expl = explode(",",$matches[1]);
-																	if(function_exists($expl[0])) { if(isset($expl[1])) { return $expl[0]($expl[1]); } else { return $expl[0](); } } return "";'
+																	if (function_exists($expl[0])) { if (isset($expl[1])) { return $expl[0]($expl[1]); } else { return $expl[0](); } } return "";'
 												),
 												$this->template);
 
 		/* cached function tokens ((funcName)) */
 		preg_match_all('/\(\((.+?)\)\)/is',$this->template,$cachedFuncs);
 		foreach($cachedFuncs[1] as $cachedFunc) {
-			if(!array_key_exists($cachedFunc,$this->cachedFuncStorage)) {
-				if(function_exists($cachedFunc)) {
+			if (!array_key_exists($cachedFunc,$this->cachedFuncStorage)) {
+				if (function_exists($cachedFunc)) {
 					$this->cachedFuncStorage[$cachedFunc] = $cachedFunc($this);
 				} else {
 					$this->cachedFuncStorage[$cachedFunc] = '';
@@ -254,7 +254,7 @@ class Page
 		/* i love syndk8 */
 		$cc = OpenBHConf::get('cc');
 		$cn = " ".OpenBHConf::get('cn');
-		if(strtoupper($cc)=='US') {
+		if (strtoupper($cc)=='US') {
 			$cc = '';
 			$cn = '';
 		}
@@ -277,13 +277,13 @@ class Page
 	{
 		$content = '';
 		foreach(array_keys($HookList) as $hook) {
-			if(!class_exists($hook)) {
+			if (!class_exists($hook)) {
 				continue;
 			}
-			if(!array_key_exists('prob',$HookList[$hook])) {
+			if (!array_key_exists('prob',$HookList[$hook])) {
 				continue; // missconfigured class - check $conf['hooks'] ..
 			}
-			if(rand(0,100)<$HookList[$hook]['prob']) {
+			if (rand(0,100)<$HookList[$hook]['prob']) {
 				$h = new $hook();
 				$content = $h->EnrichContent($content,$this->keyword,$HookList[$hook]);
 			}
@@ -293,11 +293,11 @@ class Page
 	
 	private function TextSnippet($keyword,$file) {
 		$path = sprintf("config/text/%s",$file);
-		if(!file_exists($path)) {
+		if (!file_exists($path)) {
 			return false;
 		}
 		$lines = file($path);
-		if(count($lines)<=0) {
+		if (count($lines)<=0) {
 			return false;
 		} 
 		shuffle($lines);
@@ -324,12 +324,21 @@ class Page
 	}
 	
 	private function SetCache() {
-		if(OpenBHConf::get('db')) {
+		if ($this->keyword=='') {
+			return false;
+		}
+		
+		
+		if (OpenBHConf::get('db')) {
 			$this->SetCacheDB();
 			return;
 		}
-		if($this->keyword=='') {
-			return false;
+		
+		//probably a better way to do this, but it works for now
+		$params = OpenBHConf::get('mcache');
+		if ($params['enabled']) {
+			$this->SetMasterCache($params['path'], $params['file']);
+			return;
 		}
 		
 		$path = sprintf('data/content/%s',base64_encode($this->keyword));
@@ -338,15 +347,23 @@ class Page
 	
 	// static cache/object loader 
 	public static function GetCache($keyword) {
-		if($keyword=='') {
+		if ($keyword == '') {
 			return null;
 		}
-		if(OpenBHConf::get('db')) {
+		
+		if (OpenBHConf::get('db')) {
 			return Page::GetCacheDB($keyword);
 		}
+		
+		//probably a better way to do this, but it works for now
+		$params = OpenBHConf::get('mcache');
+		if ($params['enabled']) {
+			return Page::GetMasterCache($params['path'], $params['file'], $params['lockwait']);
+		}
+		
 		$path = sprintf('data/content/%s',base64_encode($keyword));
-		if(!file_exists($path)) {
-					return null;
+		if (!file_exists($path)) {
+			return null;
 		}
 		return unserialize(gzuncompress(file_get_contents(sprintf('data/content/%s',base64_encode($keyword)))));
 	}
@@ -355,15 +372,15 @@ class Page
 		$oc_identifier = base64_encode($this->keyword);
 		$oc_data = gzcompress(serialize($this));
 		$dbl = new DBLayer();
-		if($dbl->Exists("SELECT oc_id FROM openbh_cache WHERE oc_identifier = '{$oc_identifier}'")) {
-			if($dbl->Query("UPDATE openbh_cache SET oc_data = '{$oc_data}' WHERE oc_identifier = '{$oc_identifier}'")) {
+		if ($dbl->Exists("SELECT oc_id FROM openbh_cache WHERE oc_identifier = '{$oc_identifier}'")) {
+			if ($dbl->Query("UPDATE openbh_cache SET oc_data = '{$oc_data}' WHERE oc_identifier = '{$oc_identifier}'")) {
 				$dbl->EndSession(true);
 				return true;
 			}
 			$dbl->EndSession(false);
 			return false;
 		}
-		if($dbl->Query("INSERT INTO openbh_cache SET oc_data = '{$oc_data}', oc_identifier = '{$oc_identifier}'")) {
+		if ($dbl->Query("INSERT INTO openbh_cache SET oc_data = '{$oc_data}', oc_identifier = '{$oc_identifier}'")) {
 			$dbl->EndSession(true);
 			return true;
 		}
@@ -377,6 +394,157 @@ class Page
 		$oc = $dbl->QueryAndReturn("SELECT oc_data FROM openbh_cache WHERE oc_identifier = '{$oc_identifier}'");
 		foreach($oc as $c) {
 			return unserialize(gzuncompress($c['oc_data']));
+		}
+	}
+	
+	
+	public static function GetMasterCache($path,$fname,$wait_for_unlock_true_false = true)
+	{
+		$path.="/";
+		$path=str_replace("//","/",$path);
+		
+		$mi = fopen($path.'masterindex.dat', 'r+');
+		$fp = fopen($path.'masterfile.dat', 'r+');
+		
+		$sermasterindex = '';
+		
+		if ($mi==null) {
+			return null;
+		}
+		
+		if (!$wait_for_unlock_true_false) {
+			if (!flock($mi, LOCK_EX|LOCK_NB)) {
+				$busy="";
+				
+				if (file_exists("busylist.txt")) {
+					$busy = file_get_contents("busylist.txt");
+				}
+				
+				$busy.="Busy when trying to load: ".$this->keyword."\r\n";
+				file_put_contents("busylist.txt",$busy);
+				fclose($fp);
+				fclose($mi);
+				return null;
+			}
+			
+			if (!flock($fp, LOCK_EX|LOCK_NB)) {
+				$busy="";
+				
+				if (file_exists("busylist.txt")) {
+					$busy = file_get_contents("busylist.txt");
+				}
+				
+				$busy.="Busy when trying to load: ".$this->keyword."\r\n";
+				file_put_contents("busylist.txt",$busy);
+				fclose($fp);
+				fclose($mi);
+				return null;
+			}
+		} else {
+			flock($mi, LOCK_EX);
+			flock($fp, LOCK_EX);
+		}
+		
+		if ($mi!=null && $mi!==false) {
+			while (!feof($mi)) {
+				$sermasterindex .= fread($mi, filesize($path.'masterindex.dat'));
+			}
+		} else {
+			return false;
+		}
+		
+		$masterindex = unserialize($sermasterindex);
+		
+		if ($masterindex[$fname] != null) {
+			$start = $masterindex[$fname]["start"];
+			$size = $masterindex[$fname]["stop"]-$start;
+			fseek($fp,$start);
+			
+			$ser='';
+			if ($fp!=null && $fp!==false) {
+				$newsize=0;
+				
+				while (!$newsize==$size) {
+					$ser .= fread($fp, $size);
+					$newsize=strlen($ser);
+				}
+			} else {
+				return false;
+			}
+			
+			fclose($fp);
+			fclose($mi);	
+			return $ser;	
+		}
+		
+		fclose($fp);
+		fclose($mi);
+		return null;
+	}
+	
+	public static function SetMasterCache($path,$fname,$data = $this->keyword)
+	{
+		$path.="/";
+		$path=str_replace("//","/",$path);
+		
+		if (file_exists($path."masterindex.dat")) {
+			$mi = fopen($path.'masterindex.dat', 'r+');
+			$fp = fopen($path.'masterfile.dat', 'r+');
+			flock($mi, LOCK_EX);
+			flock($fp, LOCK_EX);
+			
+			if ($mi!=null && $mi!==false) {
+				while (!feof($mi)) {
+					$sermasterindex .= fread($mi, filesize($path.'masterindex.dat'));
+				}
+			} else {
+				return null;
+			}
+			
+			$masterindex=unserialize($sermasterindex);
+			
+			if ($masterindex[$fname]==null) {
+				fseek($fp,0,SEEK_END);
+				$masterindex[$fname]["start"]=ftell($fp);				
+				fwrite($fp,$data);
+				$masterindex[$fname]["stop"]=ftell($fp);
+				$sermasterindex=serialize($masterindex);
+				$test = fseek($mi,0);
+				$test = fwrite($mi,$sermasterindex);
+			} else {
+				$start = $masterindex[$fname]["start"];
+				$oldsize = $masterindex[$fname]["stop"]-$start;
+				
+				$datalen=strlen($data);
+				if ($datalen>$oldsize) {
+					fseek($fp,0,SEEK_END);
+					$masterindex[$fname]["start"]=ftell($fp);				
+					fwrite($fp,$data);
+					$masterindex[$fname]["stop"]=ftell($fp);
+					$sermasterindex=serialize($masterindex);
+					$test = fseek($mi,0);
+					$test = fwrite($mi,$sermasterindex);
+				}
+			}
+			
+			fclose($fp);
+			fclose($mi);
+		} else {
+			$mi = fopen($path.'masterindex.dat', 'x+');
+			$fp = fopen($path.'masterfile.dat', 'x+');
+			flock($mi, LOCK_EX);
+			flock($fp, LOCK_EX);
+
+			$masterindex=array();
+			$masterindex[$fname]["start"]=0;
+
+			fwrite($fp,$data);
+			$masterindex[$fname]["stop"]=ftell($fp);
+			
+			$sermasterindex=serialize($masterindex);
+			fwrite($mi,$sermasterindex);
+			fclose($fp);
+			fclose($mi);			
 		}
 	}
 }
