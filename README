@@ -6,12 +6,11 @@ Checkout further documentation here:
 
 https://www.syndk8.com/openbh/readme.html
 
-
-
 ** Quick Installation **
 
 Unzip openbh.zip
 Upload the files to your webserver
+Chmod 755 data
 Navigate to /manage/ with your webbrowser
 Fill in the required data and click ok
 Done
