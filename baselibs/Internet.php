@@ -62,8 +62,24 @@ class Internet {
     }
 
     private static function GrabSockets($url) {
-        /* ;) */
-        return '';
+        if(!function_exists('fsockopen')) {
+			return;
+		}
+        $fp = fsockopen($url, 80, $errno, $errstr, 30);
+		if (!$fp) {
+			//echo "$errstr ($errno)<br />\n";
+			return '';
+		} else {
+			$out  = "GET / HTTP/1.1\r\n";
+			$out .= "Host: ".$url."\r\n";
+			$out .= "Connection: Close\r\n\r\n";
+			fwrite($fp, $out);
+			while (!feof($fp)) {
+				$output = $output.fgets($fp, 1024);
+			}
+			fclose($fp);
+			return $output;
+		}
     }
 
     private static function GrabSimple($url) {
