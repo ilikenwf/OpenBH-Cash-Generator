@@ -327,20 +327,15 @@ class Page
 		if ($this->keyword=='') {
 			return false;
 		}
-		
-		
 		if (OpenBHConf::get('db')) {
 			$this->SetCacheDB();
 			return;
 		}
-		
-		//probably a better way to do this, but it works for now
 		$params = OpenBHConf::get('mcache');
 		if ($params['enabled']) {
-			$this->SetMasterCache($params['path'], $params['file']);
+			$this->SetMasterCache($params['path'],$this->keyword,serialize($this));
 			return;
 		}
-		
 		$path = sprintf('data/content/%s',base64_encode($this->keyword));
 		file_put_contents($path,gzcompress(serialize($this)));
 	}
@@ -350,17 +345,18 @@ class Page
 		if ($keyword == '') {
 			return null;
 		}
-		
 		if (OpenBHConf::get('db')) {
 			return Page::GetCacheDB($keyword);
 		}
-		
-		//probably a better way to do this, but it works for now
 		$params = OpenBHConf::get('mcache');
 		if ($params['enabled']) {
-			return Page::GetMasterCache($params['path'], $params['file'], $params['lockwait']);
+			$ser = Page::GetMasterCache($params['path'],$keyword,$params['lockwait']);
+			if ($ser==null) {
+				return null;
+			} else {
+				return unserialize($ser);
+			}
 		}
-		
 		$path = sprintf('data/content/%s',base64_encode($keyword));
 		if (!file_exists($path)) {
 			return null;
@@ -402,38 +398,28 @@ class Page
 	{
 		$path.="/";
 		$path=str_replace("//","/",$path);
-		
 		$mi = fopen($path.'masterindex.dat', 'r+');
 		$fp = fopen($path.'masterfile.dat', 'r+');
-		
-		$sermasterindex = '';
-		
 		if ($mi==null) {
 			return null;
 		}
-		
 		if (!$wait_for_unlock_true_false) {
 			if (!flock($mi, LOCK_EX|LOCK_NB)) {
 				$busy="";
-				
 				if (file_exists("busylist.txt")) {
 					$busy = file_get_contents("busylist.txt");
 				}
-				
 				$busy.="Busy when trying to load: ".$this->keyword."\r\n";
 				file_put_contents("busylist.txt",$busy);
 				fclose($fp);
 				fclose($mi);
 				return null;
 			}
-			
 			if (!flock($fp, LOCK_EX|LOCK_NB)) {
 				$busy="";
-				
 				if (file_exists("busylist.txt")) {
 					$busy = file_get_contents("busylist.txt");
 				}
-				
 				$busy.="Busy when trying to load: ".$this->keyword."\r\n";
 				file_put_contents("busylist.txt",$busy);
 				fclose($fp);
@@ -444,7 +430,7 @@ class Page
 			flock($mi, LOCK_EX);
 			flock($fp, LOCK_EX);
 		}
-		
+		$sermasterindex='';
 		if ($mi!=null && $mi!==false) {
 			while (!feof($mi)) {
 				$sermasterindex .= fread($mi, filesize($path.'masterindex.dat'));
@@ -452,18 +438,14 @@ class Page
 		} else {
 			return false;
 		}
-		
-		$masterindex = unserialize($sermasterindex);
-		
-		if ($masterindex[$fname] != null) {
+		$masterindex=unserialize($sermasterindex);
+		if ($masterindex[$fname]!=null) {
 			$start = $masterindex[$fname]["start"];
 			$size = $masterindex[$fname]["stop"]-$start;
 			fseek($fp,$start);
-			
 			$ser='';
 			if ($fp!=null && $fp!==false) {
 				$newsize=0;
-				
 				while (!$newsize==$size) {
 					$ser .= fread($fp, $size);
 					$newsize=strlen($ser);
@@ -471,28 +453,24 @@ class Page
 			} else {
 				return false;
 			}
-			
 			fclose($fp);
 			fclose($mi);	
 			return $ser;	
 		}
-		
 		fclose($fp);
 		fclose($mi);
 		return null;
 	}
 	
-	public static function SetMasterCache($path,$fname,$data = $this->keyword)
+	public static function SetMasterCache($path,$fname,$data)
 	{
 		$path.="/";
 		$path=str_replace("//","/",$path);
-		
 		if (file_exists($path."masterindex.dat")) {
 			$mi = fopen($path.'masterindex.dat', 'r+');
 			$fp = fopen($path.'masterfile.dat', 'r+');
 			flock($mi, LOCK_EX);
 			flock($fp, LOCK_EX);
-			
 			if ($mi!=null && $mi!==false) {
 				while (!feof($mi)) {
 					$sermasterindex .= fread($mi, filesize($path.'masterindex.dat'));
@@ -500,9 +478,7 @@ class Page
 			} else {
 				return null;
 			}
-			
 			$masterindex=unserialize($sermasterindex);
-			
 			if ($masterindex[$fname]==null) {
 				fseek($fp,0,SEEK_END);
 				$masterindex[$fname]["start"]=ftell($fp);				
@@ -514,9 +490,9 @@ class Page
 			} else {
 				$start = $masterindex[$fname]["start"];
 				$oldsize = $masterindex[$fname]["stop"]-$start;
-				
 				$datalen=strlen($data);
-				if ($datalen>$oldsize) {
+				if ($datalen>$oldsize)
+				{
 					fseek($fp,0,SEEK_END);
 					$masterindex[$fname]["start"]=ftell($fp);				
 					fwrite($fp,$data);
@@ -526,7 +502,6 @@ class Page
 					$test = fwrite($mi,$sermasterindex);
 				}
 			}
-			
 			fclose($fp);
 			fclose($mi);
 		} else {
@@ -534,17 +509,14 @@ class Page
 			$fp = fopen($path.'masterfile.dat', 'x+');
 			flock($mi, LOCK_EX);
 			flock($fp, LOCK_EX);
-
 			$masterindex=array();
 			$masterindex[$fname]["start"]=0;
-
 			fwrite($fp,$data);
 			$masterindex[$fname]["stop"]=ftell($fp);
-			
 			$sermasterindex=serialize($masterindex);
 			fwrite($mi,$sermasterindex);
 			fclose($fp);
-			fclose($mi);			
+			fclose($mi);
 		}
 	}
 }

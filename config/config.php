@@ -157,8 +157,7 @@ class OpenBHConf
 		 **/
 		 
 		$this->conf['mcache']['enabled']  = false;
-		$this->conf['mcache']['path']     = '/data'; //not sure if this is correct syntax, but i'm too lazy to test tonight --ilikenwf
-		$this->conf['mcache']['file']     = 'mastercache.dat';
+		$this->conf['mcache']['path']     = 'data/content';
 		$this->conf['mcache']['lockwait'] = true;
     }
 
