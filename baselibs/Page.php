@@ -326,42 +326,57 @@ class Page
 	private function SetCache() {
 		if ($this->keyword=='') {
 			return false;
+		} else {
+			$option = OpenBHConf::get('cache');
+			//i realize we return before breaking, it's just good form
+			switch ($option) {
+				case "database":
+					$this->SetCacheDB();
+					return;
+					break;
+				case "standard":
+					$path = sprintf('data/content/%s',base64_encode($this->keyword));
+					file_put_contents($path,gzcompress(serialize($this)));
+					return;
+					break;
+				case "master":
+					$this->SetMasterCache('data/content',$this->keyword,serialize($this));
+					return;
+					break;
+			}
 		}
-		if (OpenBHConf::get('db')) {
-			$this->SetCacheDB();
-			return;
-		}
-		$params = OpenBHConf::get('mcache');
-		if ($params['enabled']) {
-			$this->SetMasterCache($params['path'],$this->keyword,serialize($this));
-			return;
-		}
-		$path = sprintf('data/content/%s',base64_encode($this->keyword));
-		file_put_contents($path,gzcompress(serialize($this)));
 	}
 	
 	// static cache/object loader 
 	public static function GetCache($keyword) {
 		if ($keyword == '') {
 			return null;
-		}
-		if (OpenBHConf::get('db')) {
-			return Page::GetCacheDB($keyword);
-		}
-		$params = OpenBHConf::get('mcache');
-		if ($params['enabled']) {
-			$ser = Page::GetMasterCache($params['path'],$keyword,$params['lockwait']);
-			if ($ser==null) {
-				return null;
-			} else {
-				return unserialize($ser);
+		} else {
+			$option = OpenBHConf::get('cache');
+			//i realize we return before breaking, it's just good form
+			switch ($option) {
+				case "database":
+					return Page::GetCacheDB($keyword);
+					break;
+				case "standard":
+					$path = sprintf('data/content/%s',base64_encode($keyword));
+					if (!file_exists($path)) {
+						return null;
+					} else {
+						return unserialize(gzuncompress(file_get_contents(sprintf('data/content/%s',base64_encode($keyword)))));
+					}
+					break;
+				case "master":
+					$ser = Page::GetMasterCache('data/content',$keyword,OpenBHConf::get('mclockwait'));
+					if ($ser==null) {
+						return null;
+					} else {
+						return unserialize($ser);
+					}
+					break;
 			}
 		}
-		$path = sprintf('data/content/%s',base64_encode($keyword));
-		if (!file_exists($path)) {
-			return null;
-		}
-		return unserialize(gzuncompress(file_get_contents(sprintf('data/content/%s',base64_encode($keyword)))));
+		return null;
 	}
 	
 	private function SetCacheDB() {

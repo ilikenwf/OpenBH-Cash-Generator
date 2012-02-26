@@ -62,7 +62,24 @@ class OpenBHConf
 										'ContentLength'=>array('prob'=>100,'lengthmin'=>1700,'lengthmax'=>3500),
 										'Format'=>array('prob'=>100,'pmin'=>4,'pmax'=>8,'li'=>50)									
 		);
+		
+		/* Cache Configuration - Which Cache System to Use? 
+		 * Choose ONE below: 
+		 * 	master (one file to rule them all)
+		 * 	database cache
+		 * 	standard cache (one file per page) 
+		 **/
+		$this->conf['cache'] = 'standard';
+		
+		/* If you chose mastercache, set the options below: */
+		$this->conf['mclockwait'] = true;
 
+		/* If you chose database, set the MySQL details below: */
+		$this->conf['dbhost'] = '';
+		$this->conf['dbuser'] = '';
+		$this->conf['dpbass'] = '';
+		$this->conf['dbname'] = '';
+		
 		/* ImageHook configuration - hook,probability */
 		$this->conf['imghooks'] = array(	'YahooImages'=>100,
 											'Sxc'=>10
@@ -142,23 +159,6 @@ class OpenBHConf
 
 		/* not working ? try log to errlog.txt */
 		$this->conf['errlog'] = true;
-		
-		/** 
-		 * Database caching configuration...
-		 * Uncomment and set these if you know what you're doing.
-		 */
-		//$this->conf['dbhost'] = '';
-		//$this->conf['dbuser'] = '';
-		//$this->conf['dpbass'] = '';
-		//$this->conf['dbname'] = '';
-		
-		/* Use the MasterCache (one file for everything)? 
-		 * Default values should be fine - don't set these
-		 **/
-		 
-		$this->conf['mcache']['enabled']  = false;
-		$this->conf['mcache']['path']     = 'data/content';
-		$this->conf['mcache']['lockwait'] = true;
     }
 
     public static function get($key)
