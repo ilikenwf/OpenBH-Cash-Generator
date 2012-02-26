@@ -327,9 +327,8 @@ class Page
 		if ($this->keyword=='') {
 			return false;
 		} else {
-			$option = OpenBHConf::get('cache');
 			//i realize we return before breaking, it's just good form
-			switch ($option) {
+			switch (OpenBHConf::get('cache')) {
 				case "database":
 					$this->SetCacheDB();
 					return;
@@ -352,9 +351,8 @@ class Page
 		if ($keyword == '') {
 			return null;
 		} else {
-			$option = OpenBHConf::get('cache');
 			//i realize we return before breaking, it's just good form
-			switch ($option) {
+			switch (OpenBHConf::get('cache')) {
 				case "database":
 					return Page::GetCacheDB($keyword);
 					break;
